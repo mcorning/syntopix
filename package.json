@@ -1,0 +1,19 @@
+{
+    "name": "syntopix-root",
+    "private": true,
+    "scripts": {
+        "dev:client": "pnpm --filter syntopix-client run dev",
+        "dev:server": "pnpm --filter syntopix-server run dev",
+        "dev:edge": "start msedge http://localhost:5173",
+        "dev:all": "concurrently -n client,server -c magenta,cyan \"pnpm dev:client\" \"pnpm dev:server\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.0.0"
+    },
+    "overrides": {
+        "vue-demi": "0.13.11",
+        "vue-demi@0.14.10": "0.13.11",
+        "vue-demi@*": "0.13.11",
+        "sass": "1.32.13" 
+    }
+}

@@ -1,0 +1,64 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Syntopix: Debug Vue App",
+      "url": "http://localhost:3336/syntopix", // or whatever your port is
+      "webRoot": "${workspaceFolder}/client/src",
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Syntopix: Run Dev Server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/node_modules/@vue/cli-service/bin/vue-cli-service.js",
+      "args": ["serve"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Syntopix Server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "C:/Users/mcorn/Documents/GitHub/tqr/syntopix/server/index.js",
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3334"
+      },
+      "cwd": "C:/Users/mcorn/Documents/GitHub/tqr/syntopix/server",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Syntopix Client",
+      "url": "http://localhost:3335/", // Change port to match Vue dev server (or use your IP for device testing)
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Launch Edge against localhost",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Both Syntopix",
+      "configurations": ["Syntopix Server", "Syntopix Client"]
+    }
+  ]
+}

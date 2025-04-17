@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+  "files.exclude": {
+    "**/dist": true,
+    "**/node_modules": true
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true
+}
