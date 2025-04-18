@@ -20,7 +20,7 @@
     "vue": "^3.5.13",
     "vue-draggable-plus": "^0.6.0",
     "vue-qr-generator": "^3.0.1",
-    "vue-router": "^3.5.3",
+    "vue-router": "4",
     "vue-socket.io-extended": "^4.0.0",
     "vuetify": "^3.8.2",
     "vuetify-loader": "^1.7.0"

@@ -218,7 +218,7 @@ function dateFromID(id, withTime = true) {
   return new Date(Number(id.slice(0, 13))).toString().slice(4, withTime ? 21 : 16)
 }
 
-module.exports = {
+export {
   safeParseJSON,
   pj,
   sj,

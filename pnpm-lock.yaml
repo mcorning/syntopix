@@ -45,8 +45,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       vue-router:
-        specifier: ^3.5.3
-        version: 3.6.5(vue@3.5.13)
+        specifier: '4'
+        version: 4.5.0(vue@3.5.13)
       vue-socket.io-extended:
         specifier: ^4.0.0
         version: 4.2.0
@@ -710,6 +710,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.13':
     resolution: {integrity: sha512-wMH6vrYHxQl/IybKJagqbquvxpWCuVYpoUJfCqFZwa/JY1GdATAQ+TgVtgrwwMZ0D07QhA99rs/EAAWfvG6KpA==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/eslint-config-prettier@6.0.0':
     resolution: {integrity: sha512-wFQmv45c3ige5EA+ngijq40YpVcIkAy0Lihupnsnd1Dao5CBbPyfCzqtejFLZX1EwH/kCJdpz3t6s+5wd3+KxQ==}
@@ -2187,10 +2190,10 @@ packages:
   vue-qr-generator@3.0.1:
     resolution: {integrity: sha512-1JkU1v3VP6tZKXqn/EeYDz61/m9yXdY3CZSg5yf7EC6P6G6wFpHKghJTbdWSncc54ZOSYIQ3PK8F8GLZ5oB77A==}
 
-  vue-router@3.6.5:
-    resolution: {integrity: sha512-VYXZQLtjuvKxxcshuRAwjHnciqZVoXAjTjcqBTz4rKc8qih9g9pI3hbDjmqXaHdgL3v8pV6P8Z335XvHzESxLQ==}
+  vue-router@4.5.0:
+    resolution: {integrity: sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w==}
     peerDependencies:
-      vue: ^2
+      vue: ^3.2.0
 
   vue-socket.io-extended@4.2.0:
     resolution: {integrity: sha512-3ZHy53W4CpzRdTZjWL7krq80FQlnK6IyOG0ur158pij1PXKyVBYDpjE0/3SluK7NeNTqefa/Y8RFCFy6BISG/g==}
@@ -2820,6 +2823,8 @@ snapshots:
     dependencies:
       '@vue/compiler-dom': 3.5.13
       '@vue/shared': 3.5.13
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/eslint-config-prettier@6.0.0(eslint-plugin-prettier@3.4.1(eslint-config-prettier@10.1.2(eslint@7.32.0))(eslint@7.32.0)(prettier@2.8.8))(eslint@7.32.0)(prettier@2.8.8)':
     dependencies:
@@ -4379,8 +4384,9 @@ snapshots:
       '@keeex/qrcodejs-kx': 1.0.2
       vue: 2.7.16
 
-  vue-router@3.6.5(vue@3.5.13):
+  vue-router@4.5.0(vue@3.5.13):
     dependencies:
+      '@vue/devtools-api': 6.6.4
       vue: 3.5.13
 
   vue-socket.io-extended@4.2.0:
