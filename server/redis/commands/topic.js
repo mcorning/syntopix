@@ -1,6 +1,6 @@
 // services/topic.js
 
-import  createDocument from '../services/topicService.js'
+import  {createDocument} from '../services/topicService.js'
 
 export default {
   async addTopic(keysMan, topic) {

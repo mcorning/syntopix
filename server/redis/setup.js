@@ -82,7 +82,7 @@ Redis.Command.setReplyTransformer('xrange', (result) => {
 });
 //#endregion Setup
 
-export default {
+export {
   redis,
   redisPub,
   redisSub,

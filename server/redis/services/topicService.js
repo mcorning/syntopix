@@ -404,29 +404,26 @@ async function getTopicSpaces({ topicId, topicSpaceKey }) {
   }
 }
 
-export default {
+
+
+export {
+  createDocument,
+  addTopicContent,
+  getTopicContent,
+  updatePkTopics,
+  // pickTopic,
+  fetchTopicsForPk,
+  fetchSpacesForTopic,
+  scanTopics,
   addTopicCore,
- createDocument,
-}
+  deleteTopic,
+  deleteTopicFromSpace,
+  updateTopicSpaces,
+  getTopicSpaces,
 
-// module.exports = {
-//   createDocument,
-//   addTopicContent,
-//   getTopicContent,
-//   updatePkTopics,
-//   // pickTopic,
-//   fetchTopicsForPk,
-//   fetchSpacesForTopic,
-//   scanTopics,
-//   addTopicCore,
-//   deleteTopic,
-//   deleteTopicFromSpace,
-//   updateTopicSpaces,
-//   getTopicSpaces,
+  deleteSpaceFromTopic,
+  deleteSpace,
+  persistTopicOrder,
 
-//   deleteSpaceFromTopic,
-//   deleteSpace,
-//   persistTopicOrder,
-
-//   updateTopicContent,
-// };
+  updateTopicContent,
+};

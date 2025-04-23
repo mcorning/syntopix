@@ -1,8 +1,8 @@
-// controllers/topicController.js
+// topicController.js — updated to use named export
 
 import topic from './redis/commands/topic.js'
 
-export default function registerTopicHandlers(socket, io) {
+export function registerTopicHandlers(socket, io) {
   socket.on('add_topic', (newTopic, callback) => {
     const keysMan = socket.data.keysMan
     if (!keysMan) {

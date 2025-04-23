@@ -1,4 +1,4 @@
-import redis from '../../redis/setup.js';
+import {redis} from '../../redis/setup.js';
 //#region Specialized calls
 
 /**

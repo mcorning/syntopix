@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 
 import { registerSpaceHandlers } from './spaceController.js'
-import  registerTopicHandlers  from './topicController.js'
+import  {registerTopicHandlers}  from './topicController.js'
 import { createPk } from './redis/services/pkService.js'
 
 const __filename = fileURLToPath(import.meta.url)
