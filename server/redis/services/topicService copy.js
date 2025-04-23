@@ -1,6 +1,6 @@
-import RedisService from './redisService.js'
-// const { ask } = require('../commands/readline');
-// const { queryArray } = require('../../utils/helpers');
+const RedisService = require('./redisService');
+const { ask } = require('../commands/readline');
+const { queryArray } = require('../../utils/helpers');
 
 // Create the minimal topic document in the topics stream
 function createDocument(topicStreamKey) {
@@ -79,32 +79,32 @@ function updatePkTopics(pkTopicsKey, id, title) {
 }
 
 // Pick a topic by index or title
-// function pickTopic(defaultTopicTitle, topics) {
-//   return ask('Enter Topic [by index or Title]:', defaultTopicTitle, 1).then(
-//     (topicTitle) => {
-//       console.log('\tConfirming Topic:>> ', topicTitle);
+function pickTopic(defaultTopicTitle, topics) {
+  return ask('Enter Topic [by index or Title]:', defaultTopicTitle, 1).then(
+    (topicTitle) => {
+      console.log('\tConfirming Topic:>> ', topicTitle);
 
-//       const topic = queryArray(
-//         topicTitle,
-//         (t) => t.title === topicTitle,
-//         topics
-//       );
+      const topic = queryArray(
+        topicTitle,
+        (t) => t.title === topicTitle,
+        topics
+      );
 
-//       // If no topic is found, create a new one
-//       if (!topic) {
-//         console.warn(`Topic "${topicTitle}" not found. Creating a new topic.`);
-//         return {
-//           id: `new-${Date.now()}`,
-//           title: topicTitle,
-//           spaces: [],
-//         };
-//       }
+      // If no topic is found, create a new one
+      if (!topic) {
+        console.warn(`Topic "${topicTitle}" not found. Creating a new topic.`);
+        return {
+          id: `new-${Date.now()}`,
+          title: topicTitle,
+          spaces: [],
+        };
+      }
 
-//       const { id, title, spaces } = topic;
-//       return { id, title, spaces };
-//     }
-//   );
-// }
+      const { id, title, spaces } = topic;
+      return { id, title, spaces };
+    }
+  );
+}
 
 // Fetch topics for a given PK
 function fetchTopicsForPk(pkTopicsKey, topicContentKey) {
@@ -404,29 +404,24 @@ async function getTopicSpaces({ topicId, topicSpaceKey }) {
   }
 }
 
-export default {
+module.exports = {
+  createDocument,
+  addTopicContent,
+  getTopicContent,
+  updatePkTopics,
+  pickTopic,
+  fetchTopicsForPk,
+  fetchSpacesForTopic,
+  scanTopics,
   addTopicCore,
- createDocument,
-}
+  deleteTopic,
+  deleteTopicFromSpace,
+  updateTopicSpaces,
+  getTopicSpaces,
 
-// module.exports = {
-//   createDocument,
-//   addTopicContent,
-//   getTopicContent,
-//   updatePkTopics,
-//   // pickTopic,
-//   fetchTopicsForPk,
-//   fetchSpacesForTopic,
-//   scanTopics,
-//   addTopicCore,
-//   deleteTopic,
-//   deleteTopicFromSpace,
-//   updateTopicSpaces,
-//   getTopicSpaces,
+  deleteSpaceFromTopic,
+  deleteSpace,
+  persistTopicOrder,
 
-//   deleteSpaceFromTopic,
-//   deleteSpace,
-//   persistTopicOrder,
-
-//   updateTopicContent,
-// };
+  updateTopicContent,
+};

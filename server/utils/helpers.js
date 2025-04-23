@@ -551,7 +551,7 @@ function log(key, value) {
   console.log(key, ' :>> ', v);
 }
 
-function jAudit(k, v) {
+function Audit(k, v) {
   auditColor(k, v);
   console.log(' ');
 }
@@ -569,7 +569,7 @@ function jl(k, value, level = 0, color = infoColor) {
     0: () => cl(k, v, useColor),
     1: () => cw(k, v),
     2: () => ce(k, v),
-    3: () => jAudit(k, v),
+    3: () => Audit(k, v),
   };
   if (match[level]) {
     return match[level]();
@@ -940,7 +940,15 @@ const INTERVAL = {
 //   scan: 'scan',
 // };
 
-exports = {
+function getTopicOrderKey(spaceId){
+  if (!spaceId) {
+    throw new Error('Space ID is required to generate the topic order key.')
+  }
+  return `space:${spaceId}:topicOrder`
+}
+
+export  {
+  getTopicOrderKey,
   binaryHas,
   compose,
   clc,
@@ -1032,6 +1040,7 @@ exports = {
   exists,
   intersection,
   audit,
+  Audit,
   getJson,
   setJson,
 

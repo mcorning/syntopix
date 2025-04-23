@@ -6,9 +6,11 @@
       <div v-if="false">
         <v-btn color="error" @click="triggerError">Trigger App Error</v-btn>
       </div>
-      <keep-alive>
-        <router-view />
-      </keep-alive>
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </v-main>
 
     <v-footer app color="primary" height="48">

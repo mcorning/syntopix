@@ -1,6 +1,6 @@
 // src/js/pkManager.js
 
-const { addToStream } = require("./redisService");
+import addToStream  from "./redisService.js"
 
 const PK_STREAM_KEY = "syntopix"; // Concise key for PKs
 
@@ -8,7 +8,7 @@ const PK_STREAM_KEY = "syntopix"; // Concise key for PKs
  * Retrieve an existing PK or generate a new one if none exists.
  * @returns {Promise<string>} - The existing or newly generated PK.
  */
-const createPk = () => {
+function createPk() {
   console.log(`Generating new PK...`);
   return addToStream(PK_STREAM_KEY, "*", "creator", Date.now()).then((newPk) => {
     console.log(`New PK created: ${newPk}`);
@@ -16,4 +16,4 @@ const createPk = () => {
   });
 };
 
-module.exports = { createPk };
+export { createPk };

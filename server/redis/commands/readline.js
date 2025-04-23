@@ -1,4 +1,4 @@
-const readline = require('readline');
+import readline from 'readline';
 
 // Define the tab size in spaces
 const TAB_SIZE = 2;
@@ -40,7 +40,8 @@ function pause(arg) {
   return ask('Enter continues').then(() => arg);
 }
 
-module.exports = {
+export  {
+
   ask,
   closeInterface,
   pause,

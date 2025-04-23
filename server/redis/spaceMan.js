@@ -1,8 +1,8 @@
 // this code mediates between Redis and client code
 // that manages Spaces
-const RedisService = require('./services/redisService');
-const { ask, tabbed } = require('./commands/readline');
-const { Audit, isEmpty, pj, getTopicOrderKey } = require('../utils/helpers');
+import RedisService from './services/redisService.js';
+import { ask, tabbed } from './commands/readline.js';
+import { Audit, isEmpty, pj, getTopicOrderKey } from '../utils/helpers.js';
 
 function saveTopicOrder(spaceId, newOrder) {
   // const topicOrderKey = `19:tensor:spaces:${spaceId}:topics:order`;
@@ -373,8 +373,7 @@ function handleSpaceTransformation({
   //  console.warn(`Invalid transformation with key: ${actionKey}`);
   return Promise.resolve();
 }
-
-module.exports = {
+export default {
   createSpace,
   fromSpace,
   handleSpaceTransformation,

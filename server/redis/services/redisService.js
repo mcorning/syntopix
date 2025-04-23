@@ -1,4 +1,4 @@
-const { redis } = require('../../redis/setup.js');
+import redis from '../../redis/setup.js';
 //#region Specialized calls
 
 /**
@@ -292,7 +292,7 @@ function jsonAppend(key, path, value) {
 }
 //#endregion
 
-module.exports = {
+export default {
   addToStream,
   getEntriesFromStream,
   getHashContent,

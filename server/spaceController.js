@@ -1,8 +1,8 @@
-const topic = require('./redis/commands/topic');
+import topic from './redis/commands/topic.js';
 
-const spaceMan = require('./redis/spaceMan');
+import spaceMan from './redis/spaceMan.js';
 
-const { Audit, clj, getTopicOrderKey } = require('./utils/helpers');
+import  {Audit, clj, getTopicOrderKey}  from './utils/helpers.js';
 
 function handleReorderSpaces({ orderedIDs, spaceOrderKey }) {
   return spaceMan.saveSpaceOrder(spaceOrderKey, orderedIDs);
@@ -331,4 +331,5 @@ function registerSpaceHandlers({ socket, keysMan }) {
   );
 }
 
-module.exports = { registerSpaceHandlers };
+export  {
+ registerSpaceHandlers };

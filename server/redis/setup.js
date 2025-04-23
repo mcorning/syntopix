@@ -1,4 +1,5 @@
 //#region Setup
+import Redis from 'ioredis-rejson';
 
 const pj = (json) => JSON.stringify(json, null, 2);
 let options = {};
@@ -24,7 +25,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 console.log('Redis options:', pj(options));
 
-const Redis = require('ioredis-rejson');
 
 const redis = new Redis(options);
 const redisPub = new Redis(options);
@@ -82,7 +82,7 @@ Redis.Command.setReplyTransformer('xrange', (result) => {
 });
 //#endregion Setup
 
-module.exports = {
+export default {
   redis,
   redisPub,
   redisSub,

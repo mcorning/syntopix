@@ -2,8 +2,8 @@
   <v-system-bar id="sysBar" ref="sysBar" app color="primary" dark height="48">
     <v-col cols="2">
       <v-dialog v-model="avatar" width="500">
-        <template #activator="{ on, attrs }">
-          <v-avatar v-if="showAvatar" color="accent" tile size="36" v-bind="attrs" v-on="on">
+        <template #activator="{ props }">
+          <v-avatar v-bind="props">
             <span
               class="text-h6"
               :style="{ color: barTextColor }"
