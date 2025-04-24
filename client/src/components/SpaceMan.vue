@@ -13,7 +13,7 @@
                   v-model="zone"
                   class="drop-zone"
                   v-bind="dropZoneDragOptions"
-                  @add="promptForSpace"
+                  @add="promptForSpace($event)"
                 >
                   <p>Drop Topics here to create a new Space</p>
                 </VueDraggable>
@@ -30,13 +30,99 @@
                   class="spaces-list"
                   tag="transition-group"
                   name="fade"
+                  @start="isDraggingSpace = true"
+                  @end="resetDraggingState"
                 >
-                  <v-card v-for="space in localSpaces" :key="space.id" class="space-card" outlined>
-                    <v-card-title>
-                      <v-btn text @click="selectSpace(space)">edit</v-btn>
-                      <span class="ml-2">{{ space.name }}</span>
-                    </v-card-title>
-                    <v-card-text> Topics </v-card-text>
+                  <v-card
+                    v-for="space in localSpaces"
+                    :key="space.id"
+                    class="space-item"
+                    :class="{ 'drop-hover': isOverSpace === space.id }"
+                    height="auto"
+                  >
+                    <v-text-field
+                      v-model="space.name"
+                      dense
+                      :autofocus="isNew"
+                      :hint="space.name ? 'Enter key to add' : 'Give your Space a name'"
+                      persistent-hint
+                      label="Space"
+                      :append-icon="'mdi-plus'"
+                      :append-outer-icon="'mdi-delete'"
+                      @click:append="createSpace(space)"
+                      @click:append-outer="deleteSpace(space)"
+                      @keyup.enter="createSpace"
+                    />
+
+                    <!-- Draggable Topics within each Space (Sortable) -->
+                    <VueDraggable v-if="false" v-model="space.topics" v-bind="topicsDragOptions">
+                      <v-card flat height="auto">
+                        <v-card-subtitle class="text-right pa-1"
+                          >Topics ({{ space.topics?.length }})</v-card-subtitle
+                        >
+                        <v-card-text class="accent lighten-1">
+                          <!-- update Space card with its Topics -->
+                          <!-- can add or remove Topics from Space card -->
+                          <VueDraggable
+                            v-model="space.topics"
+                            v-bind="spaceTopicsDragOptions"
+                            @add="
+                              manageTopicSpaces({
+                                topic: $event.data,
+                                to: space.id,
+                              })
+                            "
+                            @remove="handleTopicRemoval($event, space)"
+                            ><v-chip
+                              v-for="topic in space.topics"
+                              :key="topic.id"
+                              class="topic-chip"
+                            >
+                              {{ topic.title }}
+                            </v-chip></VueDraggable
+                          >
+                        </v-card-text>
+                      </v-card>
+                    </VueDraggable>
+
+                    <!-- better handles space card drop -->
+                    <VueDraggable
+                      v-else
+                      v-model="space.topics"
+                      v-bind="spaceTopicsDragOptions"
+                      class="topics-drop-container mb-5"
+                      :class="{
+                        'expanded-drop-zone': isOverSpace === space.id,
+                      }"
+                      @add="
+                        manageTopicSpaces({
+                          topic: $event.data,
+                          to: space.id,
+                        })
+                      "
+                      @remove="handleTopicRemoval($event, space)"
+                    >
+                      <v-card flat height="auto">
+                        <v-card-subtitle class="text-right pa-1">
+                          Topics ({{ space.topics?.length }})
+                        </v-card-subtitle>
+                        <v-card-text color="accent lighten-1" class="drop-zone-topics">
+                          <VueDraggable v-model="space.topics" v-bind="spaceTopicsDragOptions">
+                            <v-chip
+                              v-for="topic in space.topics"
+                              :key="topic.id"
+                              class="ma-2"
+                              close
+                              color="secondary lighten-1"
+                              text-color="black"
+                              @click:close="removeSpaceFromTopic(topic, space.id)"
+                            >
+                              {{ topic.title }}
+                            </v-chip>
+                          </VueDraggable>
+                        </v-card-text>
+                      </v-card>
+                    </VueDraggable>
                   </v-card>
                 </VueDraggable>
               </v-col>
@@ -45,39 +131,105 @@
         </v-card>
       </v-col>
 
-      <!-- Topics Section -->
+      <!-- Topics List (Sortable) -->
       <v-col cols="8">
-        <div class="topic-grid">
-          <div v-for="topic in topics" :key="topic.id">
-            {{ topic.label }}
-          </div>
-        </div>
-        <v-card color="teal">
-          <v-card-title class="white--text">
-            Topics
-            <v-spacer />
-            <v-btn
-              prepend-icon="mdi-plus-box"
-              color="secondary"
-              variant="elevated"
-              @click="showNewTopicForm = true"
+        <v-card
+          color="secondary lighten-1
+      "
+        >
+          <v-card-title class="pb-0">Topics</v-card-title>
+          <v-card-actions class="pt-0">
+            <span class="text-caption"
+              >Reorder a Topic here to see your Space reorder automatically</span
             >
-              ADD TOPIC
-            </v-btn>
-          </v-card-title>
-          <v-card-text> Reorder a Topic here to see your Space reorder automatically </v-card-text>
-          <v-expand-transition>
-            <v-card v-if="showNewTopicForm" flat class="mt-4 pa-4">
-              <v-text-field v-model="newTopic.title" label="Title" />
-              <v-textarea v-model="newTopic.summary" label="Summary" rows="2" auto-grow />
-              <v-checkbox v-model="newTopic.private" label="Private Topic" />
+            <v-spacer></v-spacer>
+            <v-btn text @click="addingTopic = true"> Add Topic </v-btn>
+          </v-card-actions>
 
-              <v-row justify="end">
-                <v-btn color="primary" variant="text" @click="submitNewTopic">ADD</v-btn>
-                <v-btn variant="text" @click="resetForm">CANCEL</v-btn>
-              </v-row>
-            </v-card>
-          </v-expand-transition>
+          <!-- New Topic Card -->
+          <v-card v-if="addingTopic" class="mt-5" color="secondary lighten-5">
+            <v-card-title>New Topic</v-card-title>
+            <v-card-text @keyup.enter="addTopic">
+              <v-text-field
+                v-model="newTopic.title"
+                autofocus
+                label="Name"
+                :hint="newID"
+                persistent-hint
+              ></v-text-field>
+              <v-text-field v-model="newTopic.summary" label="Summary"></v-text-field>
+              <v-checkbox v-model="newTopic.isPrivate" label="Private Topic" />
+            </v-card-text>
+            <v-card-actions>
+              <v-btn text @click="addTopic"> Add </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text @click="addingTopic = false"> Cancel </v-btn>
+            </v-card-actions>
+            <v-card-text> </v-card-text>
+          </v-card>
+
+          <!-- Topics Section -->
+          <v-row>
+            <VueDraggable
+              v-model="localTopics"
+              v-bind="topicsDragOptions"
+              class="d-flex flex-wrap topics-drop-zone"
+              :ghost-class="'dragging-item'"
+              @end="onTopicsReordered"
+            >
+              <v-col
+                v-for="topic in localTopics"
+                :key="topic.id"
+                cols="12"
+                sm="6"
+                md="4"
+                lg="3"
+                class="topic-col"
+              >
+                <v-card class="mx-auto pa-3 topic-card" color="secondary lighten-4">
+                  <v-card-text>
+                    <v-card-title class="text-wrap">
+                      {{ topic.title }}
+                    </v-card-title>
+                    <v-card-subtitle>
+                      ID: {{ topic.id }}
+                      <p>
+                        {{ createdOn(topic.id) }}
+                      </p>
+                      <p>
+                        {{ topic.lastUpdate }}
+                      </p>
+                      <p>{{ topic.summary }}</p>
+                      <p>{{ topic.words }} words</p>
+                    </v-card-subtitle>
+
+                    <v-card-subtitle class="text-left pa-1">
+                      Spaces ({{ topic.spaces?.length }})
+                    </v-card-subtitle>
+                    <v-card color="secondary lighten-3" flat>
+                      <v-card-text color="secondary lighten-1" class="drop-zone-topics">
+                        <v-chip
+                          v-for="(space, idx) in topic.spaces"
+                          :key="idx"
+                          class="ma-2"
+                          close
+                          color="accent lighten-1"
+                          @click:close="removeSpaceFromTopic(topic, space)"
+                        >
+                          {{ space }}
+                        </v-chip>
+                      </v-card-text>
+                    </v-card>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn text @click="$emit('edit-topic', topic)"> Edit</v-btn>
+                    <v-spacer />
+                    <v-btn text @click="deleteTopic(topic)"> Delete</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </VueDraggable>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -85,8 +237,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
+import { Audit, deriveResponseType } from '@/js/helpers.js'
 
 const props = defineProps({
   spaces: {
@@ -103,10 +256,33 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['select-space', 'create-space', 'add-topic'])
+const emit = defineEmits([
+  'select-space',
+  'create-space',
+  'add-topic',
+  'edit-topic',
+  'reorder-topic-cards',
+])
 
 const zone = ref([])
+const addingTopic = ref(false)
+const showNewTopicForm = ref(false)
+
+const newTopic = ref({
+  title: '',
+  summary: '',
+  created: Date.now().toString(),
+  private: true,
+})
+
 const localSpaces = ref(props.spaces)
+const localTopics = ref(props.topics)
+
+const topicsDragOptions = {
+  animation: 150,
+  group: 'topics',
+  ghostClass: 'ghost',
+}
 
 const dropZoneDragOptions = {
   animation: 200,
@@ -119,29 +295,73 @@ const dropZoneDragOptions = {
 }
 
 const spacesDragOptions = {
-  animation: 300,
+  animation: 150,
   group: 'spaces',
-  handle: '.space-card',
+  handle: '.space-item',
+}
+
+const spaceTopicsDragOptions = {
+  animation: 150,
+  group: 'topics',
+  ghostClass: 'ghost',
+}
+
+function resetDraggingState() {
+  // Vue 3 doesn't use `this` in <script setup>
+  // Manually reset external state if needed
+}
+
+function onTopicsReordered() {
+  const newTopicOrder = localTopics.value
+  console.clear()
+  console.log(
+    `Emitting reordered topics `,
+    newTopicOrder.map((v) => v.title)
+  )
+  emit('reorder-topic-cards', { newTopicOrder })
+}
+
+function addTopic() {
+  const responseHandlers = {
+    success: (response) => {
+      Audit.add({ msg: `addTopic() successful ${response.success}` })
+    },
+    prompt: (response) => {
+      Audit.add({ msg: `User prompt required: ${response.prompt}` })
+    },
+    error: (response) => {
+      Audit.add({ msg: `!!! ${response.error} ERROR in addTopic()` })
+    },
+    default: () => {
+      console.warn('Unhandled response type')
+    },
+  }
+
+  const respond = (response) => {
+    const type = response.type || deriveResponseType(response)
+    const handler = responseHandlers[type] || responseHandlers.default
+    handler(response)
+    Audit.report('Audit: Adding Topic ')
+  }
+
+  if (newTopic.value.title.trim()) {
+    emit('add-topic', newTopic.value, respond)
+  }
+  addingTopic.value = false
+  resetForm()
 }
 
 function promptForSpace(event) {
   emit('create-space', event)
 }
 
-function selectSpace(space) {
-  emit('select-space', space)
+function removeSpaceFromTopic(topic, spaceId) {
+  topic.spaces = topic.spaces.filter((s) => s !== spaceId)
 }
-const showNewTopicForm = ref(false)
-const newTopic = ref({
-  title: '',
-  summary: '',
-  created: Date.now().toString(),
-  private: true,
-})
 
-function submitNewTopic() {
-  emit('add-topic', { ...newTopic.value })
-  resetForm()
+function createdOn(id) {
+  const timestamp = parseInt(id.split('-')[0])
+  return new Date(timestamp).toLocaleString()
 }
 
 function resetForm() {

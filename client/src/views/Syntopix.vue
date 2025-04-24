@@ -3,9 +3,9 @@
     <div v-if="!hasSpaceTopics">No Space Topics yet.</div>
 
     <div class="layout">
-      <SpaceMan v-if="!test" :spaces="spaces" :topics="topics" />
+      <SpaceMan :spaces="spaces" :topics="topics" @add-topic="addTopic" />
       <SpaceMan
-        v-else
+        v-if="test"
         :spaces="spaces"
         :topics="topics"
         :local-tab-topics="localTabTopics"
@@ -36,13 +36,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, inject, watchEffect, watch } from 'vue'
 import SpaceMan from '@/components/SpaceMan.vue'
-import SocketService from '@/services/socket'
-import { onMounted, onBeforeUnmount } from 'vue'
+import SocketService from '@/services/socket.js'
+
+const socket = inject('socket')
+const keysMan = inject('keysMan')
+const pk = inject('pk')
+console.log(socket.value)
+console.log(keysMan)
 
 const spaces = ref([])
 const topics = ref([])
+
 const localSpaceTopics = ref({})
 const selectedSpace = ref(null)
 const selectedTopic = ref(null)
@@ -98,20 +104,20 @@ function saveTopicToServer(topic) {
   SocketService.socket.emit('topic:create', topic)
 }
 
-// const keysMan = ref(null) // or use let if it's only set once
-
 onMounted(() => {
-  SocketService.initialize((allTopics) => {
-    topics.value = allTopics
-  })
-
-  SocketService.onTopicsUpdate((newTopic) => {
-    topics.value.push(newTopic)
-  })
+  SocketService.initialize()
 })
 
-onBeforeUnmount(() => {
-  SocketService.handshakeOff()
+watchEffect(() => {
+  const km = SocketService.getKeysMan()
+  if (km) {
+    keysMan.value = km
+    socket.value = SocketService.getSocket()
+  }
+})
+
+watch(pk, (newPk) => {
+  console.log('👀 Reactive PK updated in App.vue:', newPk)
 })
 </script>
 

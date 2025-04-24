@@ -406,7 +406,7 @@ async function getTopicSpaces({ topicId, topicSpaceKey }) {
 
 
 
-export {
+export default {
   createDocument,
   addTopicContent,
   getTopicContent,

@@ -1,6 +1,6 @@
 // src/js/pkManager.js
 
-import addToStream  from "./redisService.js"
+import RedisService  from "./redisService.js"
 
 const PK_STREAM_KEY = "syntopix"; // Concise key for PKs
 
@@ -10,7 +10,7 @@ const PK_STREAM_KEY = "syntopix"; // Concise key for PKs
  */
 function createPk() {
   console.log(`Generating new PK...`);
-  return addToStream(PK_STREAM_KEY, "*", "creator", Date.now()).then((newPk) => {
+  return RedisService.addToStream(PK_STREAM_KEY, "*", "creator", Date.now()).then((newPk) => {
     console.log(`New PK created: ${newPk}`);
     return newPk;
   });

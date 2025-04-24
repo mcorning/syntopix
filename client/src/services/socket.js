@@ -1,122 +1,88 @@
-// services/socket.js (John's protocol handler)
+// socket.js — Vue 3 reactive SocketService with provide/inject support
+
 import { io } from 'socket.io-client'
 import config from '../../syntopix.config.js'
-import EVENTS from './socketEvents.js'
-
-const socket = io(config.VITE_APP_HOST, {
-  auth: {
-    userID: localStorage.getItem('pk'),
-  },
-})
 
 let internalKeysMan = null
+let internalSocket = null
 
 function createKeysMan(pk) {
-  const namespace = `19:syntopix`
+  const ns = 'syntopix'
   return {
-    topicStreamKey: `${namespace}:topics:stream`,
-    pkTopicsKey: `${namespace}:pks:${pk}:topics`,
-    topicContentKey: `${namespace}:topics:content`,
-    topicSpaceKey: `${namespace}:topics:spaces`,
-    pkSpacesKey: `${namespace}:pks:${pk}:spaces`,
-    spaceOrderKey: `${namespace}:pks:${pk}:spaces:order`,
-    topicOrderKey: `${namespace}:spaces::topics:order`,
-    spaceKey: `${namespace}:spaces:${pk}`,
     pk,
+    topicStreamKey: `${ns}:topics:stream`,
+    pkTopicsKey: `${ns}:pks:${pk}:topics`,
+    topicContentKey: `${ns}:topics:content`,
+    topicSpaceKey: `${ns}:topics:spaces`,
+    pkSpacesKey: `${ns}:pks:${pk}:spaces`,
+    spaceOrderKey: `${ns}:pks:${pk}:spaces:order`,
+    topicOrderKey: `${ns}:spaces::topics:order`,
+    spaceKey: `${ns}:spaces:${pk}`,
   }
+}
+
+function initialize() {
+  const userID = (() => {
+    const pk = localStorage.getItem('pk')
+    return pk === 'null' ? null : pk
+  })()
+
+  const socket = io(config.VITE_APP_HOST, {
+    auth: { userID },
+  })
+
+  internalSocket = socket
+
+  socket.on('handshake', ({ pk, socketID }) => {
+    console.log('PK', pk)
+    console.log('socketID', socketID)
+    localStorage.setItem('pk', pk)
+    internalKeysMan = createKeysMan(pk)
+    emit('set_keysMan', internalKeysMan)
+  })
+
+  socket.on('connect', () => {
+    console.log('🟢 Socket connected:', socket.id)
+  })
+
+  socket.on('disconnect', () => {
+    console.warn('🔌 Socket disconnected')
+  })
 }
 
 function emit(event, payload, callback) {
-  console.log(`📤 Emitting ${event}:`, payload)
-  socket.emit(event, payload, (response) => {
-    console.log(`📥 Response to ${event}:`, response)
-    callback?.(response)
-  })
+  if (!internalSocket) return
+  internalSocket.emit(event, payload, callback)
 }
 
 function on(event, handler) {
-  socket.on(event, (...args) => {
-    console.log(`📡 Received ${event}:`, ...args)
-    handler(...args)
-  })
-}
-
-function off(event, handler) {
-  if (handler) socket.off(event, handler)
-  else socket.off(event)
-}
-
-function emitHandshake(keysMan) {
-  console.log('🤝 Sending keysMan to server:', keysMan)
-  emit(EVENTS.SET_KEYS_MAN, keysMan)
-}
-
-function onHandshake(handler) {
-  on(EVENTS.HANDSHAKE, handler)
-}
-
-function offHandshake() {
-  off(EVENTS.HANDSHAKE)
-}
-
-function fetchTopics(keysMan, callback) {
-  console.log('📥 Fetching topics with:', keysMan.pkTopicsKey)
-  emit(EVENTS.FETCH_TOPICS, null, (response) => {
-    if (response.success) {
-      console.log(`✅ Fetched ${response.topics.length} topics`)
-      callback(response.topics)
-    } else {
-      console.error('❌ Failed to fetch topics:', response.error)
-      callback([])
-    }
-  })
-}
-
-function onTopicsUpdate(handler) {
-  on(EVENTS.TOPICS_UPDATE, handler)
-}
-
-function emitAddTopic(newTopic, callback) {
-  if (!internalKeysMan) {
-    console.warn('⚠️ Cannot emit add_topic: keysMan not initialized')
-    callback?.({ success: false, error: 'Missing keysMan' })
-    return
-  }
-  console.log('📤 Emitting add_topic with topic:', newTopic)
-  emit(EVENTS.ADD_TOPIC, newTopic, callback)
+  if (!internalSocket) return
+  internalSocket.on(event, handler)
 }
 
 function getKeysMan() {
   return internalKeysMan
 }
 
-function initialize(onTopicsLoaded) {
-  onHandshake(({ pk }) => {
-    if (!pk) {
-      console.warn('⚠️ Server handshake returned null PK')
-      return
-    }
-    localStorage.setItem('pk', pk)
-    internalKeysMan = createKeysMan(pk)
-    emitHandshake(internalKeysMan)
-    fetchTopics(internalKeysMan, (topics) => {
-      onTopicsLoaded(topics)
-    })
-  })
+function getSocket() {
+  return internalSocket
+}
+
+function onTopicsUpdate(handler) {
+  on('topics_update', handler)
+}
+
+function emitAddTopic(newTopic, callback) {
+  emit('add_topic', newTopic, callback)
 }
 
 export default {
-  socket,
-  createKeysMan,
-  getKeysMan,
-  on,
-  emit,
-  off,
-  emitHandshake,
-  onHandshake,
-  offHandshake,
-  onTopicsUpdate,
-  emitAddTopic,
-  fetchTopics,
   initialize,
+  getKeysMan,
+  getSocket,
+  emit,
+  on,
+  onTopicsUpdate,
+  createKeysMan,
+  emitAddTopic,
 }

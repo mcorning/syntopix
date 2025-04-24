@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     socket.emit('handshake', { pk, socketID });
   }
   socket.on('set_keysMan', (keysMan) => {
-    console.log('Received keysMan from Vue:', keysMan);
+    console.warn('Received keysMan from Vue:', keysMan);
 
     // Register handlers
     registerSpaceHandlers({ socket, keysMan });
