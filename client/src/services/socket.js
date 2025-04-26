@@ -75,6 +75,9 @@ function onTopicsUpdate(handler) {
 function emitAddTopic(newTopic, callback) {
   emit('add_topic', newTopic, callback)
 }
+function emitGetTopics(callback) {
+  emit('get_topics', null, callback)
+}
 
 export default {
   initialize,
@@ -85,4 +88,5 @@ export default {
   onTopicsUpdate,
   createKeysMan,
   emitAddTopic,
+  emitGetTopics,
 }

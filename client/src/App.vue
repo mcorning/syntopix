@@ -30,8 +30,9 @@ import SocketService from '@/services/socket'
 const socket = ref(null)
 const keysMan = ref(null)
 
-const pk = computed(() => keysMan.value?.pk || '(pending...)')
-
+const pk = computed(() => {
+  return localStorage.getItem('pk') || '(not set)'
+})
 provide('socket', socket)
 provide('keysMan', keysMan)
 provide('pk', pk)

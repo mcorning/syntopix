@@ -4,11 +4,7 @@
       <v-dialog v-model="avatar" width="500">
         <template #activator="{ props }">
           <v-avatar v-bind="props">
-            <span
-              class="text-h6"
-              :style="{ color: barTextColor }"
-              v-text="cid.slice(11, 13)"
-            ></span>
+            <span class="text-h6" :style="{ color: barTextColor }" v-text="clue"></span>
           </v-avatar>
         </template>
         <v-card>
@@ -25,14 +21,15 @@ import { ref, computed } from 'vue'
 
 const avatar = ref(false)
 const barTextColor = computed(() => '#FFFFFF')
-
-defineProps({
+const props = defineProps({
   showAvatar: Boolean,
   cid: {
     type: String,
     default: '',
   },
 })
+
+const clue = computed(() => (props.cid.endsWith(')') ? '' : props.cid.slice(11, 13)))
 </script>
 
 <style scoped>

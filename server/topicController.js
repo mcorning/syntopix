@@ -3,6 +3,23 @@
 import topic from './redis/commands/topic.js'
 
 export function registerTopicHandlers(socket, io) {
+  socket.on('get_topics', (payload, callback) => {
+    const keysMan = socket.data.keysMan
+    if (!keysMan) {
+      console.warn('⚠️ No keysMan on socket')
+      callback?.([])
+      return
+    }
+
+    topic
+      .getTopicsForPk(keysMan)
+      .then(callback)
+      .catch((err) => {
+        console.error('❌ Error in get_topics:', err)
+        callback([])
+      })
+  })
+
   socket.on('add_topic', (newTopic, callback) => {
     const keysMan = socket.data.keysMan
     if (!keysMan) {

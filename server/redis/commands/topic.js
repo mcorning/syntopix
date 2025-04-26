@@ -37,12 +37,12 @@ function addTopic(keysMan, topic) {
 // called by topicController: edit_topic handler
 function getTopic({ keysMan, topic }) {
   console.log('topic :>> ', JSON.stringify(topic, null, 2));
-  const { topicContentKey } = keysMan;
-  const key = `${topicContentKey}:${topic.id}`;
+  const { topicContentKey, pk } = keysMan
+  const key = `${topicContentKey}:${topic.id}`
   return topicService.getTopicContent(key).then((content) => {
-    console.log('content :>> ', content);
-    return content;
-  });
+    console.log(pk, 'content :>> ', content)
+    return content
+  })
 }
 
 /**
@@ -64,7 +64,7 @@ function listTopicSpaces(keysMan) {
   return getTopicsForPk(keysMan)
     .then((topics) => {
       if (!topics || topics.length === 0) {
-        console.log(`No topics found for PK: ${keysMan.pk}`);
+        console.warn(`\nNo topics found for PK: ${keysMan.pk}\n`);
         return [];
       }
       const topicSpaceKey = keysMan.topicSpaceKey;

@@ -129,10 +129,10 @@ function fetchTopicsForPk(pkTopicsKey, topicContentKey) {
           return RedisService.getHashContent(topicKey)
             .then((content) => {
               if (!content || Object.keys(content).length === 0) {
-                console.warn(`No content found for topic ID: ${id}`);
+                console.warn(`\nNo content found for topic ID: ${id}\n`);
                 return { id, title: 'Untitled' }; // Default to 'Untitled' if content is missing
               }
-              console.log('content :>> ', { ...content });
+              console.log(id, 'content :>> ', { ...content })
               return {
                 id,
                 title: content.title || 'Untitled', // Default title if none provided

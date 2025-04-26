@@ -50,6 +50,9 @@ io.on('connection', (socket) => {
 
     registerSpaceHandlers({ socket, keysMan })
     registerTopicHandlers(socket, io)
+
+      socket.emit('ready')
+
   })
 
   socket.emit('testing', 'Come here, Watson.')
