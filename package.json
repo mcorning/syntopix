@@ -2,6 +2,9 @@
     "name": "syntopix-root",
     "private": true,
     "scripts": {
+                "test-db": "node ./tests/databaseService.test.js",
+                "test-space": "node ./tests/spaceService.test.js",
+                "test-topic": "node ./tests/topicService.test.js",
         "dev:client": "pnpm --filter syntopix-client run dev",
         "dev:server": "pnpm --filter syntopix-server run dev",
         "dev:edge": "start msedge http://localhost:5173",
@@ -14,6 +17,6 @@
         "vue-demi": "0.13.11",
         "vue-demi@0.14.10": "0.13.11",
         "vue-demi@*": "0.13.11",
-        "sass": "1.32.13" 
+        "sass": "1.32.13"
     }
 }
