@@ -1,8 +1,8 @@
 <template>
-  <v-app style="background-color: 'white'">
+  <v-app style="background-color: white">
     <systemHeader :show-avatar="true" :cid="pk" />
 
-    <v-main id="main" style="overflow-y: auto">
+    <v-main id="main">
       <div v-if="false">
         <v-btn color="error" @click="triggerError">Trigger App Error</v-btn>
       </div>
@@ -13,7 +13,7 @@
       </router-view>
     </v-main>
 
-    <v-footer app color="primary" height="48">
+    <v-footer id="footer" ref="footer" app color="primary" dark class="ma-0" padless>
       <span class="white--text">&copy; 2025 Syntopix</span><v-spacer /><span
         class="white--text pr-5"
         >{{ pk }}</span
@@ -60,6 +60,6 @@ function triggerError() {
 
 <style scoped>
 #main {
-  height: 100vh;
+  overflow-y: auto;
 }
 </style>

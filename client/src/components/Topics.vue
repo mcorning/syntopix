@@ -13,8 +13,8 @@
       class="topics-drop-zone d-flex flex-wrap w-100"
       :ghost-class="'dragging-item'"
       v-bind="topicsDragOptions"
-      @end="onTopicsReordered"
       tag="div"
+      @end="onTopicsReordered"
     >
       <v-col
         v-for="topic in localTopics"
@@ -98,16 +98,6 @@ function onTopicsReordered() {
   padding: 20px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.topics {
-  background: #f6f4ec;
-  padding: 20px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
   min-height: 200px;
   display: flex;
   flex-direction: column;
