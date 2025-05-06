@@ -2,6 +2,36 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run simpleClientTest",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/tests/simpleClient.test.js",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run Syntopix Server (index.js)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run PK Service Test",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/server/tests/pkService.test.js",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--enable-source-maps"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Run Space Service Test",
@@ -40,6 +70,33 @@
         "NODE_ENV": "development"
       }
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run topicController Test",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/server/tests/topicController.test.js",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--enable-source-maps"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run spaceController Test",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/server/tests/spaceController.test.js",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--enable-source-maps"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+
     {
       "name": "Run dev:all (client + server)",
       "type": "node",

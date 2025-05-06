@@ -1,7 +1,7 @@
 // socket.js — Vue 3 reactive SocketService with provide/inject support
 
 import { io } from 'socket.io-client'
-import config from '../../syntopix.config.js'
+import config from '../../../global.syntopix.config.js'
 
 let internalKeysMan = null
 let internalSocket = null
@@ -29,6 +29,7 @@ function initialize() {
 
   const socket = io(config.VITE_APP_HOST, {
     auth: { userID },
+    transports: ['websocket'], // optional but works well
   })
 
   internalSocket = socket
@@ -42,11 +43,16 @@ function initialize() {
   })
 
   socket.on('connect', () => {
+    console.log('[socket.js] Connecting to:', config.VITE_APP_HOST)
+
     console.log('🟢 Socket connected:', socket.id)
   })
 
   socket.on('disconnect', () => {
     console.warn('🔌 Socket disconnected')
+  })
+  socket.on('connect_error', (err) => {
+    console.error('❌ Socket connection error:', err.message)
   })
 }
 
@@ -73,10 +79,24 @@ function onTopicsUpdate(handler) {
 }
 
 function emitAddTopic(newTopic, callback) {
+  const keysMan = getKeysMan()
+  if (!keysMan) {
+    console.error('Cannot emit add_topic: keysMan not initialized')
+    return
+  }
   emit('add_topic', newTopic, callback)
 }
 function emitGetTopics(callback) {
   emit('get_topics', null, callback)
+}
+
+function emitWithKeysMan(event, payload, callback) {
+  const keysMan = getKeysMan()
+  if (!keysMan) {
+    console.error(`Cannot emit ${event}: keysMan not initialized`)
+    return
+  }
+  emit(event, { keysMan, ...payload }, callback)
 }
 
 export default {
@@ -89,4 +109,5 @@ export default {
   createKeysMan,
   emitAddTopic,
   emitGetTopics,
+  emitWithKeysMan,
 }

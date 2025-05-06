@@ -6,29 +6,17 @@ async function ensureConnected() {
   await db.connect()
 }
 
-async function addToStream(streamKey, id, field, value) {
+async function storeObject(collectionName, object) {
   await ensureConnected()
-  return db.xAdd(streamKey, id, { [field]: value })
+  return db.storeObject(collectionName, object)
 }
 
-async function setHash(key, fields) {
+async function fetchOrderedList(collectionName, start = '-', end = '+') {
   await ensureConnected()
-  return db.hSet(key, fields)
-}
-
-async function getHash(key) {
-  await ensureConnected()
-  return db.hGetAll(key)
-}
-
-async function getStreamRange(key, start = '-', end = '+') {
-  await ensureConnected()
-  return db.xRange(key, start, end)
+  return db.fetchOrderedList(collectionName, start, end)
 }
 
 export default {
-  addToStream,
-  setHash,
-  getHash,
-  getStreamRange,
+  storeObject,
+  fetchOrderedList,
 }

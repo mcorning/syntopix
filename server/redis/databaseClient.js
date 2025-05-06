@@ -9,13 +9,19 @@ client.on('error', (err) => console.error('Redis Client Error:', err))
 const RedisDatabase = {
   async connect() {
     if (!client.isOpen) {
+      console.log('Connecting to Redis...')
       await client.connect()
+      console.log('Redis connected.')
     }
   },
-  xAdd: (...args) => client.xAdd(...args),
-  hSet: (...args) => client.hSet(...args),
-  hGetAll: (...args) => client.hGetAll(...args),
-  xRange: (...args) => client.xRange(...args),
+
+  async storeObject(collectionName, object) {
+    return client.xAdd(collectionName, '*', { data: JSON.stringify(object) })
+  },
+
+  async fetchOrderedList(collectionName, start = '-', end = '+') {
+    return client.xRange(collectionName, start, end)
+  },
 }
 
 export default RedisDatabase

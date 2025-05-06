@@ -1,34 +1,26 @@
-import config from '../config.js'
+// /tests/databaseService.test.js
+import databaseService from '../services/databaseService.js'
 
-const db = config.databaseEngine
-
-async function ensureConnected() {
-  await db.connect()
+async function testStoreObject() {
+  try {
+    const result = await databaseService.storeObject('testStream', {
+      field1: 'value1',
+    })
+    console.log('storeObject result:', result)
+  } catch (error) {
+    console.error('Error in storeObject:', error)
+  }
 }
 
-async function addToStream(streamKey, id, field, value) {
-  await ensureConnected()
-  return db.xAdd(streamKey, id, { [field]: value })
+async function testFetchOrderedList() {
+  try {
+    const result = await databaseService.fetchOrderedList('testStream')
+    console.log('fetchOrderedList result:', result)
+  } catch (error) {
+    console.error('Error in fetchOrderedList:', error)
+  }
 }
 
-async function setHash(key, fields) {
-  await ensureConnected()
-  return db.hSet(key, fields)
-}
-
-async function getHash(key) {
-  await ensureConnected()
-  return db.hGetAll(key)
-}
-
-async function getStreamRange(key, start = '-', end = '+') {
-  await ensureConnected()
-  return db.xRange(key, start, end)
-}
-
-export default {
-  addToStream,
-  setHash,
-  getHash,
-  getStreamRange,
-}
+// Run tests
+await testStoreObject()
+await testFetchOrderedList()

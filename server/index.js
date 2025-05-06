@@ -1,63 +1,44 @@
-// index.js — fully ESM-ready with __dirname support
-
-import express from 'express'
+// /server/index.js
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
-
-import { registerSpaceHandlers } from './spaceController.js'
-import  {registerTopicHandlers}  from './topicController.js'
-import { createPk } from './redis/services/pkService.js'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+import express from 'express'
+import registerSpaceHandlers from './socketHandlers/spaceHandlers.js'
+import registerTopicHandlers from './socketHandlers/topicHandlers.js'
+import config from './config.js'
+import db from './redis/databaseClient.js'
 
 const app = express()
 const httpServer = createServer(app)
-const io = new Server(httpServer, { cors: { origin: '*' } })
-const PORT = process.env.PORT || 3334
-
-app.use(express.static(path.join(__dirname, '../client/dist')))
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'))
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: '*',
+//   },
+// })
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
 })
+// Connect to Redis
+await db.connect()
 
-httpServer.listen(PORT, () => {
-  console.log(`syntopix-server index.js is running on port ${PORT}`)
-})
-
+// Socket.IO connection
 io.on('connection', (socket) => {
-  const pk = socket.handshake.auth.userID
-  const socketID = socket.id
+  console.log('Client connected:', socket.id)
 
-  console.log("io.on('connection') :>> ", {
-    socketID,
-    auth: socket.handshake.auth,
-  })
-
-  if (!pk) {
-    createPk().then((pk) => socket.emit('handshake', { pk, socketID }))
-  } else {
-    socket.emit('handshake', { pk, socketID })
-  }
-
-  socket.on('set_keysMan', (keysMan) => {
-    console.log('Received keysMan from Vue:', keysMan)
-    socket.data.keysMan = keysMan
-
-    registerSpaceHandlers({ socket, keysMan })
-    registerTopicHandlers(socket, io)
-
-      socket.emit('ready')
-
-  })
-
-  socket.emit('testing', 'Come here, Watson.')
+  // Register our event handlers
+  registerSpaceHandlers(socket)
+  registerTopicHandlers(socket)
 
   socket.on('disconnect', () => {
-    console.log(`Disconnected client: ${socket.id}`)
+    console.log('Client disconnected:', socket.id)
   })
+})
+
+// Start the server
+const PORT = process.env.PORT || 3000
+httpServer.listen(PORT, () => {
+  console.log(`Syntopix Server is running on port ${PORT}`)
 })
